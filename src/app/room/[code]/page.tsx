@@ -96,6 +96,7 @@ export default function RoomPage({ params }: PageProps) {
             players={players}
             prompts={prompts}
             myPrompt={myPrompt}
+            myPlayerId={myPlayer.id}
             isHost={isHost}
             onSubmitPrompt={submitPrompt}
             onStartRounds={async () => {

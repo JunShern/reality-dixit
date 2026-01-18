@@ -1,22 +1,81 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { Player, Prompt } from '@/lib/types';
 import { FileText, PenLine, Lightbulb, CheckCircle, Clock, Play, Sparkles, Check } from 'lucide-react';
+
+const INSPIRATION_PROMPTS = [
+  'take me back',
+  'Simpler times',
+  'the one that got away',
+  'Before everything changed',
+  'main character energy',
+  'Questionable decisions',
+  'peak happiness',
+  'Instant regret',
+  'worth every penny',
+  'Against all odds',
+  'proof that magic exists',
+  'Time stood still',
+  'the universe said yes',
+  'Home is where...',
+  '3am energy',
+  'life saver',
+  "i shouldn't have",
+  'MVP',
+  'OOTD',
+  'what a view!',
+  "i don't even know what was going on",
+  'Best day ever',
+  'what a beautiful planet <3',
+  "you miss every shot you don't take",
+  'Evidence for the divorce lawyer',
+  'my villain origin story',
+  'Not my proudest moment',
+  'delete before mom sees',
+  'My FBI agent is concerned',
+  'explain this to HR',
+  "the reason i'm going to hell",
+  'intrusive thoughts won',
+  'Breakfast of Kings',
+  'travel pics',
+  'eating healthy',
+  'best meal ever',
+  'Best drink ever',
+  'Training montage',
+  'wOrKiNG HaRd',
+  'no caption',
+  'roadtrip',
+  'fancy pants',
+  'people of culture',
+];
 
 interface PromptCollectionProps {
   players: Player[];
   prompts: Prompt[];
   myPrompt: Prompt | undefined;
+  myPlayerId: string;
   isHost: boolean;
   onSubmitPrompt: (text: string) => Promise<void>;
   onStartRounds: () => Promise<void>;
+}
+
+// Simple hash function to get a stable number from a string
+function hashCode(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash);
 }
 
 export function PromptCollection({
   players,
   prompts,
   myPrompt,
+  myPlayerId,
   isHost,
   onSubmitPrompt,
   onStartRounds,
@@ -26,6 +85,16 @@ export function PromptCollection({
   const [isStarting, setIsStarting] = useState(false);
 
   const allPromptsSubmitted = prompts.length === players.length;
+
+  // Select 3 random prompts based on player ID (so each player sees different ones)
+  const inspirationPrompts = useMemo(() => {
+    const shuffled = [...INSPIRATION_PROMPTS].sort((a, b) => {
+      const hashA = hashCode(a + myPlayerId);
+      const hashB = hashCode(b + myPlayerId);
+      return hashA - hashB;
+    });
+    return shuffled.slice(0, 3);
+  }, [myPlayerId]);
 
   const handleSubmit = async () => {
     if (!promptText.trim() || myPrompt) return;
@@ -103,12 +172,7 @@ export function PromptCollection({
                 <span>Need inspiration?</span>
               </p>
               <div className="flex flex-wrap gap-2">
-                {[
-                  '3am energy',
-                  'Life saver',
-                  "I shouldn't have",
-                  'What a view!',
-                ].map((example) => (
+                {inspirationPrompts.map((example) => (
                   <button
                     key={example}
                     onClick={() => setPromptText(example)}
