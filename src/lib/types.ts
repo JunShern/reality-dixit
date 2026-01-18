@@ -16,6 +16,7 @@ export interface Database {
           round_phase: RoundPhase | null;
           reveal_index: number;
           phase_end_time: string | null;
+          next_room_code: string | null;
           created_at: string;
         };
         Insert: {
@@ -26,6 +27,7 @@ export interface Database {
           round_phase?: RoundPhase | null;
           reveal_index?: number;
           phase_end_time?: string | null;
+          next_room_code?: string | null;
           created_at?: string;
         };
         Update: {
@@ -36,6 +38,7 @@ export interface Database {
           round_phase?: RoundPhase | null;
           reveal_index?: number;
           phase_end_time?: string | null;
+          next_room_code?: string | null;
           created_at?: string;
         };
         Relationships: [];

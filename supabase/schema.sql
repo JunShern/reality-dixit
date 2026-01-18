@@ -17,6 +17,7 @@ CREATE TABLE rooms (
   round_phase round_phase DEFAULT NULL,
   reveal_index INTEGER DEFAULT 0,
   phase_end_time TIMESTAMPTZ DEFAULT NULL,
+  next_room_code TEXT DEFAULT NULL,  -- Used for Play Again to redirect players to new room
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

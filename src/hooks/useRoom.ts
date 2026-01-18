@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import type { Room, Player, Prompt, Submission, Vote, SubmissionWithVotes } from '@/lib/types';
+import { generateRoomCode, generateSessionToken } from '@/lib/supabase';
 
 // Create supabase client lazily
 function getSupabase() {
@@ -76,20 +77,54 @@ export function useRoom(roomCode: string): UseRoomResult {
       setIsLoading(true);
       setError(null);
 
+      const supabase = getSupabase();
+
+      // Check for auto-rejoin via username query param (used for Play Again redirect)
+      const urlParams = new URLSearchParams(window.location.search);
+      const autoJoinUsername = urlParams.get('username');
+
       // Get player session from localStorage
       const sessionStr = localStorage.getItem('playerSession');
-      if (!sessionStr) {
+      let session: PlayerSession | null = sessionStr ? JSON.parse(sessionStr) : null;
+
+      // If no valid session but have username param, try to auto-rejoin
+      if ((!session || session.roomCode !== roomCode) && autoJoinUsername) {
+        // First get the room to find room_id
+        const { data: roomForAutoJoin } = await supabase
+          .from('rooms')
+          .select('id')
+          .eq('code', roomCode)
+          .single();
+
+        if (roomForAutoJoin) {
+          // Look for player with this username
+          const { data: existingPlayer } = await supabase
+            .from('players')
+            .select('*')
+            .eq('room_id', roomForAutoJoin.id)
+            .eq('username', autoJoinUsername)
+            .single();
+
+          if (existingPlayer) {
+            // Create session for this player
+            const newSession: PlayerSession = {
+              sessionToken: existingPlayer.session_token,
+              playerId: existingPlayer.id,
+              roomId: roomForAutoJoin.id,
+              roomCode: roomCode,
+            };
+            localStorage.setItem('playerSession', JSON.stringify(newSession));
+            // Remove username from URL and reload
+            window.history.replaceState({}, '', `/room/${roomCode}`);
+            session = newSession;
+          }
+        }
+      }
+
+      if (!session || session.roomCode !== roomCode) {
         setError('No session found. Please rejoin the room.');
         return;
       }
-
-      const session: PlayerSession = JSON.parse(sessionStr);
-      if (session.roomCode !== roomCode) {
-        setError('Session mismatch. Please rejoin the room.');
-        return;
-      }
-
-      const supabase = getSupabase();
 
       // Load room
       const { data: roomData, error: roomError } = await supabase
@@ -169,6 +204,12 @@ export function useRoom(roomCode: string): UseRoomResult {
       }, (payload) => {
         if (payload.eventType === 'UPDATE') {
           const newRoom = payload.new as Room;
+
+          // If room has next_room_code, redirect guests to new room
+          if (newRoom.next_room_code && myPlayer && !myPlayer.is_host) {
+            window.location.href = `/room/${newRoom.next_room_code}?username=${encodeURIComponent(myPlayer.username)}`;
+            return;
+          }
 
           // Clear game data when room transitions to waiting (Play Again)
           // Check before updating room state so we can compare old vs new status
@@ -359,38 +400,74 @@ export function useRoom(roomCode: string): UseRoomResult {
   }, [room, isHost, players, votes, submissions]);
 
   const playAgain = useCallback(async () => {
-    if (!room || !isHost) return;
+    if (!room || !isHost || !myPlayer) return;
 
     const supabase = getSupabase();
 
-    // Delete all game data for this room
-    await supabase.from('votes').delete().eq('room_id', room.id);
-    await supabase.from('submissions').delete().eq('room_id', room.id);
-    await supabase.from('prompts').delete().eq('room_id', room.id);
+    try {
+      // Generate new room code (with collision check)
+      let newCode = generateRoomCode();
+      let attempts = 0;
+      while (attempts < 5) {
+        const { data: existing } = await supabase
+          .from('rooms')
+          .select('id')
+          .eq('code', newCode)
+          .single();
+        if (!existing) break;
+        newCode = generateRoomCode();
+        attempts++;
+      }
 
-    // Reset all player scores to 0
-    await supabase
-      .from('players')
-      .update({ score: 0 })
-      .eq('room_id', room.id);
+      // Create new room
+      const { data: newRoom, error: roomError } = await supabase
+        .from('rooms')
+        .insert({ code: newCode })
+        .select()
+        .single();
 
-    // Reset room to waiting state
-    await supabase
-      .from('rooms')
-      .update({
-        status: 'waiting',
-        current_round: 0,
-        round_phase: null,
-        reveal_index: 0,
-        phase_end_time: null,
-      })
-      .eq('id', room.id);
+      if (roomError || !newRoom) {
+        console.error('Failed to create new room:', roomError);
+        return;
+      }
 
-    // Clear local state
-    setPrompts([]);
-    setSubmissions([]);
-    setVotes([]);
-  }, [room, isHost]);
+      // Create new player records for all players
+      for (const player of players) {
+        const sessionToken = generateSessionToken();
+        const { data: newPlayer } = await supabase
+          .from('players')
+          .insert({
+            room_id: newRoom.id,
+            username: player.username,
+            is_host: player.is_host,
+            session_token: sessionToken,
+          })
+          .select()
+          .single();
+
+        // If this is the host, update their session
+        if (player.id === myPlayer.id && newPlayer) {
+          localStorage.setItem('playerSession', JSON.stringify({
+            sessionToken,
+            playerId: newPlayer.id,
+            roomId: newRoom.id,
+            roomCode: newCode,
+          }));
+        }
+      }
+
+      // Set next_room_code on old room to trigger guest redirects
+      await supabase
+        .from('rooms')
+        .update({ next_room_code: newCode })
+        .eq('id', room.id);
+
+      // Navigate host to new room
+      window.location.href = `/room/${newCode}`;
+    } catch (err) {
+      console.error('Error in playAgain:', err);
+    }
+  }, [room, isHost, myPlayer, players]);
 
   return {
     room,
