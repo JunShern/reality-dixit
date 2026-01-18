@@ -84,6 +84,7 @@ export function PromptCollection({
   const [promptText, setPromptText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
+  const [error, setError] = useState('');
 
   const allPromptsSubmitted = prompts.length === players.length;
 
@@ -100,6 +101,16 @@ export function PromptCollection({
   const handleSubmit = async () => {
     if (!promptText.trim() || myPrompt) return;
 
+    // Check for duplicate (case-insensitive)
+    const isDuplicate = prompts.some(
+      p => p.text.toLowerCase() === promptText.trim().toLowerCase()
+    );
+    if (isDuplicate) {
+      setError('Someone already submitted this prompt! Try another one.');
+      return;
+    }
+
+    setError('');
     setIsSubmitting(true);
     try {
       await onSubmitPrompt(promptText.trim());
@@ -141,7 +152,10 @@ export function PromptCollection({
               <input
                 type="text"
                 value={promptText}
-                onChange={(e) => setPromptText(e.target.value)}
+                onChange={(e) => {
+                  setPromptText(e.target.value);
+                  setError('');
+                }}
                 placeholder='e.g., "This literally made my day"'
                 className="input w-full px-4 py-3"
                 maxLength={100}
@@ -149,6 +163,9 @@ export function PromptCollection({
               <p className="text-gray-medium text-xs mt-2 font-light">
                 {promptText.length}/100 characters
               </p>
+              {error && (
+                <p className="text-coral text-sm mt-2 font-medium">{error}</p>
+              )}
             </div>
 
             <button
