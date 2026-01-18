@@ -32,9 +32,26 @@ export function PhotoReveal({
 }: PhotoRevealProps) {
   const [currentIndex, setCurrentIndex] = useState(room.reveal_index || 0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [countdown, setCountdown] = useState(5);
 
   const totalRounds = players.length;
   const revealComplete = currentIndex >= submissions.length;
+  const currentSubmission = submissions[currentIndex];
+
+  // Countdown timer
+  useEffect(() => {
+    if (revealComplete) return;
+
+    setCountdown(5);
+    const interval = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) return 5;
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [currentIndex, revealComplete]);
 
   // Auto-advance reveals every 5 seconds (host controls this)
   useEffect(() => {
@@ -64,9 +81,8 @@ export function PhotoReveal({
     setCurrentIndex(room.reveal_index || 0);
   }, [room.reveal_index]);
 
-  // Get revealed submissions (all up to current index)
+  // Get previously revealed submissions (all before current index)
   const revealedSubmissions = submissions.slice(0, currentIndex);
-  const currentSubmission = submissions[currentIndex - 1];
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
@@ -88,7 +104,7 @@ export function PhotoReveal({
         {/* Reveal Progress */}
         <div className="text-center mb-6">
           <span className="text-purple-200">
-            Revealing photo {Math.min(currentIndex, submissions.length)} of {submissions.length}
+            Revealing photo {Math.min(currentIndex + 1, submissions.length)} of {submissions.length}
           </span>
         </div>
 
@@ -98,7 +114,7 @@ export function PhotoReveal({
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 shadow-xl">
               <img
                 src={currentSubmission.photo_url}
-                alt={`Submission ${currentIndex}`}
+                alt={`Submission ${currentIndex + 1}`}
                 className="w-full rounded-lg"
               />
             </div>
@@ -106,11 +122,11 @@ export function PhotoReveal({
         )}
 
         {/* Revealed Photos (Thumbnails) */}
-        {revealedSubmissions.length > 1 && !revealComplete && (
+        {revealedSubmissions.length > 0 && !revealComplete && (
           <div className="mb-6">
             <p className="text-purple-300 text-sm mb-2">Previous reveals:</p>
             <div className="grid grid-cols-4 gap-2">
-              {revealedSubmissions.slice(0, -1).map((submission, idx) => (
+              {revealedSubmissions.map((submission, idx) => (
                 <div key={submission.id} className="aspect-square">
                   <img
                     src={submission.photo_url}
@@ -159,8 +175,8 @@ export function PhotoReveal({
         )}
 
         {!revealComplete && (
-          <div className="text-center text-purple-300 animate-pulse">
-            Next photo in 5 seconds...
+          <div className="text-center">
+            <span className="text-4xl font-bold text-purple-300">{countdown}</span>
           </div>
         )}
       </div>
