@@ -171,19 +171,27 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-b from-purple-900 to-indigo-900">
-      <div className="w-full max-w-md">
-        <h1 className="text-4xl font-bold text-center text-white mb-2">
-          Reality Dixit
-        </h1>
-        <p className="text-center text-purple-200 mb-8">
-          Match your photos to prompts
-        </p>
+    <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-paper">
+      <div className="w-full max-w-md animate-fade-in">
+        {/* Header with board game feel */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center gap-3 mb-3">
+            <span className="text-3xl">📸</span>
+            <h1 className="text-display text-4xl font-bold text-charcoal tracking-tight">
+              Reality Dixit
+            </h1>
+            <span className="text-3xl">🎲</span>
+          </div>
+          <p className="text-charcoal-light font-body">
+            Match your photos to prompts
+          </p>
+        </div>
 
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
+        {/* Main card */}
+        <div className="card-elevated p-6 mb-6">
           {/* Username input */}
           <div className="mb-6">
-            <label htmlFor="username" className="block text-sm font-medium text-purple-200 mb-2">
+            <label htmlFor="username" className="block text-sm font-semibold text-teal mb-2">
               Your Name
             </label>
             <input
@@ -192,14 +200,14 @@ export default function Home() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your name"
-              className="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-purple-300 border border-purple-400/30 focus:outline-none focus:ring-2 focus:ring-purple-400"
+              className="input w-full px-4 py-3"
               maxLength={20}
             />
           </div>
 
           {/* Error message */}
           {error && (
-            <div className="mb-4 p-3 bg-red-500/20 border border-red-400/30 rounded-lg text-red-200 text-sm">
+            <div className="mb-4 p-3 bg-coral-light/20 border-2 border-coral/30 rounded-xl text-coral-dark text-sm font-medium">
               {error}
             </div>
           )}
@@ -208,48 +216,80 @@ export default function Home() {
           <button
             onClick={createRoom}
             disabled={isCreating || isJoining}
-            className="w-full py-3 px-4 bg-purple-500 hover:bg-purple-400 disabled:bg-purple-500/50 text-white font-semibold rounded-lg transition-colors mb-4"
+            className="btn btn-primary w-full py-3.5 px-4 text-lg mb-4"
           >
-            {isCreating ? 'Creating...' : 'Create New Room'}
+            {isCreating ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="animate-pulse-soft">Creating...</span>
+              </span>
+            ) : (
+              <span className="flex items-center justify-center gap-2">
+                <span>🎯</span>
+                <span>Create New Room</span>
+              </span>
+            )}
           </button>
 
           {/* Divider */}
-          <div className="flex items-center mb-4">
-            <div className="flex-1 border-t border-purple-400/30"></div>
-            <span className="px-4 text-purple-300 text-sm">or join existing</span>
-            <div className="flex-1 border-t border-purple-400/30"></div>
+          <div className="flex items-center my-5">
+            <div className="flex-1 border-t-2 border-dashed border-gray-light"></div>
+            <span className="px-4 text-gray-medium text-sm font-medium">or join existing</span>
+            <div className="flex-1 border-t-2 border-dashed border-gray-light"></div>
           </div>
 
           {/* Join Room */}
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <input
               type="text"
               value={roomCode}
               onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
               placeholder="WXYZ"
-              className="flex-1 px-4 py-3 rounded-lg bg-white/20 text-white placeholder-purple-300 border border-purple-400/30 focus:outline-none focus:ring-2 focus:ring-purple-400 uppercase tracking-widest text-center font-mono"
+              className="input flex-1 px-4 py-3 room-code text-center text-lg"
               maxLength={4}
             />
             <button
               onClick={joinRoom}
               disabled={isCreating || isJoining}
-              className="px-6 py-3 bg-indigo-500 hover:bg-indigo-400 disabled:bg-indigo-500/50 text-white font-semibold rounded-lg transition-colors"
+              className="btn btn-secondary px-6 py-3"
             >
               {isJoining ? 'Joining...' : 'Join'}
             </button>
           </div>
         </div>
 
-        {/* How to play */}
-        <div className="mt-8 text-center">
-          <h2 className="text-lg font-semibold text-white mb-2">How to Play</h2>
-          <ol className="text-purple-200 text-sm space-y-1">
-            <li>1. Create or join a room with friends</li>
-            <li>2. Everyone submits a prompt</li>
-            <li>3. Each round, upload a photo matching the prompt</li>
-            <li>4. Vote for the best photo (not your own!)</li>
-            <li>5. Most votes wins!</li>
+        {/* How to play card */}
+        <div className="card p-5">
+          <h2 className="text-display text-lg font-bold text-teal mb-3 flex items-center gap-2">
+            <span>🃏</span>
+            <span>How to Play</span>
+          </h2>
+          <ol className="text-charcoal-light text-sm space-y-2 stagger-children">
+            <li className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-coral text-white text-xs font-bold flex items-center justify-center">1</span>
+              <span>Create or join a room with friends</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-coral text-white text-xs font-bold flex items-center justify-center">2</span>
+              <span>Everyone submits a prompt</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-coral text-white text-xs font-bold flex items-center justify-center">3</span>
+              <span>Each round, upload a photo matching the prompt</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-coral text-white text-xs font-bold flex items-center justify-center">4</span>
+              <span>Vote for the best photo (not your own!)</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-coral text-white text-xs font-bold flex items-center justify-center">5</span>
+              <span>Most votes wins! 🏆</span>
+            </li>
           </ol>
+        </div>
+
+        {/* Footer decoration */}
+        <div className="mt-6 text-center text-gray-medium text-xs">
+          <span>Made with ❤️ for game nights</span>
         </div>
       </div>
     </main>

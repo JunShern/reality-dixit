@@ -27,36 +27,47 @@ export function FinalScores({ players, isHost, onPlayAgain }: FinalScoresProps) 
   const hasWinner = winner && winner.score > 0;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Winner Announcement */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-4">Game Over!</h1>
-          {hasWinner && (
-            <div className="bg-yellow-500/20 border-2 border-yellow-400 rounded-2xl p-6">
-              <div className="text-6xl mb-4">👑</div>
-              <div className="text-2xl font-bold text-yellow-300">
-                {winner.username}
-              </div>
-              <div className="text-yellow-200">
-                wins with {winner.score} point{winner.score !== 1 ? 's' : ''}!
-              </div>
-            </div>
-          )}
-          {!hasWinner && (
-            <div className="bg-purple-500/20 border border-purple-400/30 rounded-2xl p-6">
-              <div className="text-4xl mb-4">🤷</div>
-              <div className="text-xl text-purple-200">
-                No votes were cast!
-              </div>
-            </div>
-          )}
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-paper">
+      <div className="w-full max-w-md animate-fade-in">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <span className="text-4xl">🎮</span>
+          <h1 className="text-display text-3xl font-bold text-charcoal mt-2">Game Over!</h1>
         </div>
 
+        {/* Winner Announcement */}
+        {hasWinner && (
+          <div className="card-elevated p-8 mb-6 bg-gold/10 border-2 border-gold text-center">
+            <div className="text-6xl mb-4">🏆</div>
+            <div className="text-display text-2xl font-bold text-charcoal mb-2">
+              {winner.username}
+            </div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gold/20 rounded-full">
+              <span className="text-gold font-bold text-lg">{winner.score}</span>
+              <span className="text-gold">⭐</span>
+              <span className="text-charcoal-light">{winner.score !== 1 ? 'points' : 'point'}</span>
+            </div>
+            <p className="text-charcoal-light mt-3 text-sm">Champion of the game!</p>
+          </div>
+        )}
+
+        {!hasWinner && (
+          <div className="card-elevated p-6 mb-6 text-center">
+            <div className="text-4xl mb-4">🤷</div>
+            <div className="text-display text-xl text-charcoal">
+              No votes were cast!
+            </div>
+            <p className="text-charcoal-light mt-2 text-sm">Better luck next time!</p>
+          </div>
+        )}
+
         {/* Leaderboard */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-xl mb-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Final Standings</h2>
-          <div className="space-y-3">
+        <div className="card p-5 mb-6">
+          <h2 className="text-display text-lg font-bold text-teal mb-4 flex items-center gap-2">
+            <span>📊</span>
+            <span>Final Standings</span>
+          </h2>
+          <div className="space-y-3 stagger-children">
             {sortedPlayers.map((player, idx) => {
               const rank = idx + 1;
               const isWinner = rank === 1 && player.score > 0;
@@ -64,30 +75,40 @@ export function FinalScores({ players, isHost, onPlayAgain }: FinalScoresProps) 
               return (
                 <div
                   key={player.id}
-                  className={`flex items-center gap-4 p-3 rounded-lg ${
-                    isWinner ? 'bg-yellow-500/20' : 'bg-white/5'
+                  className={`flex items-center gap-4 p-3 rounded-xl transition-all ${
+                    isWinner ? 'bg-gold/15 border-2 border-gold/50' : 'bg-cream-dark'
                   }`}
                 >
-                  {/* Rank */}
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                    rank === 1 ? 'bg-yellow-500 text-yellow-900' :
-                    rank === 2 ? 'bg-gray-300 text-gray-700' :
-                    rank === 3 ? 'bg-orange-400 text-orange-900' :
-                    'bg-white/20 text-white'
+                  {/* Rank with medal badge */}
+                  <div className={`rank-circle ${
+                    rank === 1 ? 'rank-1' :
+                    rank === 2 ? 'rank-2' :
+                    rank === 3 ? 'rank-3' :
+                    'rank-other'
                   }`}>
-                    {rank}
+                    {rank === 1 ? '👑' : rank}
                   </div>
 
                   {/* Name */}
                   <div className="flex-1">
-                    <span className={`font-semibold ${isWinner ? 'text-yellow-300' : 'text-white'}`}>
+                    <span className={`font-semibold ${isWinner ? 'text-charcoal' : 'text-charcoal'}`}>
                       {player.username}
                     </span>
+                    {rank === 1 && hasWinner && (
+                      <span className="ml-2 badge badge-gold text-xs">Winner</span>
+                    )}
+                    {rank === 2 && (
+                      <span className="ml-2 badge badge-silver text-xs">2nd</span>
+                    )}
+                    {rank === 3 && (
+                      <span className="ml-2 badge badge-bronze text-xs">3rd</span>
+                    )}
                   </div>
 
                   {/* Score */}
-                  <div className={`font-bold ${isWinner ? 'text-yellow-300' : 'text-white'}`}>
-                    {player.score} pt{player.score !== 1 ? 's' : ''}
+                  <div className={`font-bold flex items-center gap-1 ${isWinner ? 'text-gold' : 'text-charcoal'}`}>
+                    <span>{player.score}</span>
+                    <span className="text-gold text-sm">⭐</span>
                   </div>
                 </div>
               );
@@ -100,15 +121,30 @@ export function FinalScores({ players, isHost, onPlayAgain }: FinalScoresProps) 
           <button
             onClick={handlePlayAgain}
             disabled={isResetting}
-            className="w-full py-4 px-6 bg-purple-500 hover:bg-purple-400 disabled:bg-purple-500/50 text-white font-bold text-lg rounded-xl transition-colors"
+            className="btn btn-primary w-full py-4 text-lg font-bold"
           >
-            {isResetting ? 'Resetting...' : 'Play Again'}
+            {isResetting ? (
+              <span className="animate-pulse-soft">Resetting...</span>
+            ) : (
+              <span className="flex items-center justify-center gap-2">
+                <span>🔄</span>
+                <span>Play Again</span>
+              </span>
+            )}
           </button>
         ) : (
-          <div className="text-center text-purple-200">
-            Waiting for host to start new game...
+          <div className="card p-4 text-center">
+            <p className="text-charcoal-light flex items-center justify-center gap-2">
+              <span className="animate-pulse-soft">⏳</span>
+              <span>Waiting for host to start new game...</span>
+            </p>
           </div>
         )}
+
+        {/* Footer */}
+        <div className="mt-6 text-center text-gray-medium text-xs">
+          <span>Thanks for playing! 🎲</span>
+        </div>
       </div>
     </div>
   );

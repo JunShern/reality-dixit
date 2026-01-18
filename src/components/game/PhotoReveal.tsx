@@ -85,25 +85,29 @@ export function PhotoReveal({
   const revealedSubmissions = submissions.slice(0, currentIndex);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-lg">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-paper">
+      <div className="w-full max-w-lg animate-fade-in">
         {/* Round indicator */}
         <div className="text-center mb-4">
-          <span className="text-purple-300 text-sm">
+          <span className="badge badge-gold">
             Round {room.current_round} of {totalRounds}
           </span>
         </div>
 
         {/* Prompt Display */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 shadow-xl mb-6">
-          <p className="text-xl font-bold text-white text-center">
+        <div className="card-elevated p-5 mb-6">
+          <p className="text-teal text-sm font-semibold mb-2 flex items-center justify-center gap-2">
+            <span>🎯</span>
+            <span>The Prompt</span>
+          </p>
+          <p className="text-display text-xl font-bold text-charcoal text-center">
             &quot;{currentPrompt?.text || 'Loading...'}&quot;
           </p>
         </div>
 
         {/* Reveal Progress */}
-        <div className="text-center mb-6">
-          <span className="text-purple-200">
+        <div className="text-center mb-4">
+          <span className="text-charcoal-light text-sm">
             Revealing photo {Math.min(currentIndex + 1, submissions.length)} of {submissions.length}
           </span>
         </div>
@@ -111,12 +115,18 @@ export function PhotoReveal({
         {/* Current Photo (Large) */}
         {currentSubmission && !revealComplete && (
           <div className={`mb-6 transition-all duration-300 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 shadow-xl">
-              <img
-                src={currentSubmission.photo_url}
-                alt={`Submission ${currentIndex + 1}`}
-                className="w-full rounded-lg"
-              />
+            <div className="card-elevated p-4">
+              {/* Polaroid-style frame */}
+              <div className="bg-white p-3 pb-10 rounded-lg shadow-md">
+                <img
+                  src={currentSubmission.photo_url}
+                  alt={`Submission ${currentIndex + 1}`}
+                  className="w-full rounded"
+                />
+              </div>
+              <div className="text-center mt-3">
+                <span className="text-teal font-semibold">Photo #{currentIndex + 1}</span>
+              </div>
             </div>
           </div>
         )}
@@ -124,14 +134,17 @@ export function PhotoReveal({
         {/* Revealed Photos (Thumbnails) */}
         {revealedSubmissions.length > 0 && !revealComplete && (
           <div className="mb-6">
-            <p className="text-purple-300 text-sm mb-2">Previous reveals:</p>
+            <p className="text-charcoal-light text-sm mb-3 flex items-center gap-2">
+              <span>📸</span>
+              <span>Previous reveals:</span>
+            </p>
             <div className="grid grid-cols-4 gap-2">
               {revealedSubmissions.map((submission, idx) => (
-                <div key={submission.id} className="aspect-square">
+                <div key={submission.id} className="aspect-square bg-white p-1 rounded-lg shadow-sm">
                   <img
                     src={submission.photo_url}
                     alt={`Submission ${idx + 1}`}
-                    className="w-full h-full object-cover rounded-lg opacity-60"
+                    className="w-full h-full object-cover rounded opacity-70"
                   />
                 </div>
               ))}
@@ -142,16 +155,25 @@ export function PhotoReveal({
         {/* All Photos (when reveal complete) */}
         {revealComplete && (
           <div className="mb-6">
-            <p className="text-green-300 text-center font-semibold mb-4">All photos revealed!</p>
+            <div className="card p-4 bg-sage/10 border-2 border-sage/40 mb-4">
+              <p className="text-sage-dark text-center font-semibold flex items-center justify-center gap-2">
+                <span>✨</span>
+                <span>All photos revealed!</span>
+                <span>✨</span>
+              </p>
+            </div>
             <div className="grid grid-cols-2 gap-3">
               {submissions.map((submission, idx) => (
-                <div key={submission.id} className="bg-white/10 backdrop-blur-sm rounded-xl p-2">
-                  <img
-                    src={submission.photo_url}
-                    alt={`Submission ${idx + 1}`}
-                    className="w-full rounded-lg"
-                  />
-                  <p className="text-purple-300 text-xs text-center mt-1">Photo #{idx + 1}</p>
+                <div key={submission.id} className="card p-3">
+                  {/* Mini polaroid style */}
+                  <div className="bg-white p-2 pb-6 rounded shadow-sm">
+                    <img
+                      src={submission.photo_url}
+                      alt={`Submission ${idx + 1}`}
+                      className="w-full rounded"
+                    />
+                  </div>
+                  <p className="text-charcoal-light text-xs text-center mt-2 font-medium">Photo #{idx + 1}</p>
                 </div>
               ))}
             </div>
@@ -162,21 +184,31 @@ export function PhotoReveal({
         {isHost && revealComplete && (
           <button
             onClick={onAdvancePhase}
-            className="w-full py-4 px-6 bg-green-500 hover:bg-green-400 text-white font-bold text-lg rounded-xl transition-colors"
+            className="btn btn-success w-full py-4 text-lg font-bold"
           >
-            Start Voting!
+            <span className="flex items-center justify-center gap-2">
+              <span>⭐</span>
+              <span>Start Voting!</span>
+            </span>
           </button>
         )}
 
         {!isHost && revealComplete && (
-          <div className="text-center text-purple-200">
-            Waiting for host to start voting...
+          <div className="card p-4 text-center">
+            <p className="text-charcoal-light flex items-center justify-center gap-2">
+              <span className="animate-pulse-soft">⏳</span>
+              <span>Waiting for host to start voting...</span>
+            </p>
           </div>
         )}
 
+        {/* Countdown */}
         {!revealComplete && (
           <div className="text-center">
-            <span className="text-4xl font-bold text-purple-300">{countdown}</span>
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-teal/10 rounded-2xl border-2 border-teal/30">
+              <span className="text-xl">⏱️</span>
+              <span className="text-4xl font-bold text-teal font-mono">{countdown}</span>
+            </div>
           </div>
         )}
       </div>
