@@ -26,6 +26,7 @@ interface UseRoomResult {
   players: Player[];
   prompts: Prompt[];
   submissions: SubmissionWithVotes[];
+  allSubmissions: Submission[];
   votes: Vote[];
   myPlayer: Player | null;
   currentPrompt: Prompt | null;
@@ -394,6 +395,7 @@ export function useRoom(roomCode: string): UseRoomResult {
     players,
     prompts,
     submissions: submissionsWithVotes,
+    allSubmissions: submissions,
     votes,
     myPlayer,
     currentPrompt,

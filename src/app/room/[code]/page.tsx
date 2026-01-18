@@ -22,6 +22,8 @@ export default function RoomPage({ params }: PageProps) {
     players,
     prompts,
     submissions,
+    allSubmissions,
+    votes,
     myPlayer,
     currentPrompt,
     mySubmission,
@@ -192,6 +194,9 @@ export default function RoomPage({ params }: PageProps) {
             players={players}
             isHost={isHost}
             onPlayAgain={playAgain}
+            prompts={prompts}
+            allSubmissions={allSubmissions}
+            votes={votes}
           />
         );
 

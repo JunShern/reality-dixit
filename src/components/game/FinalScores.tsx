@@ -1,17 +1,29 @@
 'use client';
 
-import { useState } from 'react';
-import type { Player } from '@/lib/types';
-import { Gamepad2, Trophy, Star, Crown, BarChart3, RotateCcw, Clock, HelpCircle, Dice6 } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import type { Player, Prompt, Submission, Vote } from '@/lib/types';
+import { Gamepad2, Trophy, Star, Crown, BarChart3, RotateCcw, Clock, HelpCircle, Dice6, ChevronLeft, ChevronRight, Camera } from 'lucide-react';
 
 interface FinalScoresProps {
   players: Player[];
   isHost: boolean;
   onPlayAgain: () => Promise<void>;
+  prompts: Prompt[];
+  allSubmissions: Submission[];
+  votes: Vote[];
 }
 
-export function FinalScores({ players, isHost, onPlayAgain }: FinalScoresProps) {
+interface RoundWinner {
+  round: number;
+  prompt: Prompt;
+  winningSubmission: Submission | null;
+  winnerPlayer: Player | null;
+  voteCount: number;
+}
+
+export function FinalScores({ players, isHost, onPlayAgain, prompts, allSubmissions, votes }: FinalScoresProps) {
   const [isResetting, setIsResetting] = useState(false);
+  const [recapIndex, setRecapIndex] = useState(0);
 
   const handlePlayAgain = async () => {
     setIsResetting(true);
@@ -21,6 +33,53 @@ export function FinalScores({ players, isHost, onPlayAgain }: FinalScoresProps) 
       setIsResetting(false);
     }
   };
+
+  // Calculate winners for each round
+  const roundWinners = useMemo<RoundWinner[]>(() => {
+    // Get prompts sorted by round number
+    const sortedPrompts = [...prompts]
+      .filter(p => p.round_number !== null)
+      .sort((a, b) => (a.round_number ?? 0) - (b.round_number ?? 0));
+
+    return sortedPrompts.map(prompt => {
+      const round = prompt.round_number!;
+      const roundSubmissions = allSubmissions.filter(s => s.round === round);
+      const roundVotes = votes.filter(v => v.round === round);
+
+      // Count votes per submission
+      const voteCountBySubmission: Record<string, number> = {};
+      for (const vote of roundVotes) {
+        voteCountBySubmission[vote.submission_id] = (voteCountBySubmission[vote.submission_id] ?? 0) + 1;
+      }
+
+      // Find winning submission (most votes)
+      let winningSubmission: Submission | null = null;
+      let maxVotes = 0;
+      for (const submission of roundSubmissions) {
+        const count = voteCountBySubmission[submission.id] ?? 0;
+        if (count > maxVotes) {
+          maxVotes = count;
+          winningSubmission = submission;
+        }
+      }
+
+      const winnerPlayer = winningSubmission
+        ? players.find(p => p.id === winningSubmission!.player_id) ?? null
+        : null;
+
+      return {
+        round,
+        prompt,
+        winningSubmission,
+        winnerPlayer,
+        voteCount: maxVotes,
+      };
+    });
+  }, [prompts, allSubmissions, votes, players]);
+
+  const totalRounds = roundWinners.length;
+  const currentRecap = roundWinners[recapIndex];
+
   // Sort players by score
   const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
 
@@ -116,6 +175,77 @@ export function FinalScores({ players, isHost, onPlayAgain }: FinalScoresProps) 
             })}
           </div>
         </div>
+
+        {/* Winning Entries Recap */}
+        {totalRounds > 0 && (
+          <div className="card p-5 mb-6">
+            <h2 className="text-lg font-medium text-teal mb-4 flex items-center gap-2">
+              <Camera size={20} strokeWidth={1.5} />
+              <span>Winning Entries</span>
+            </h2>
+
+            {/* Navigation header */}
+            <div className="flex items-center justify-between mb-4">
+              <button
+                onClick={() => setRecapIndex(i => Math.max(0, i - 1))}
+                disabled={recapIndex === 0}
+                className="p-2 rounded-full hover:bg-cream-dark disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                aria-label="Previous round"
+              >
+                <ChevronLeft size={24} strokeWidth={1.5} />
+              </button>
+
+              <span className="text-charcoal font-medium">
+                Round {recapIndex + 1} of {totalRounds}
+              </span>
+
+              <button
+                onClick={() => setRecapIndex(i => Math.min(totalRounds - 1, i + 1))}
+                disabled={recapIndex === totalRounds - 1}
+                className="p-2 rounded-full hover:bg-cream-dark disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                aria-label="Next round"
+              >
+                <ChevronRight size={24} strokeWidth={1.5} />
+              </button>
+            </div>
+
+            {currentRecap && (
+              <div className="text-center">
+                {/* Prompt */}
+                <p className="text-charcoal-light font-light mb-4 italic">
+                  &ldquo;{currentRecap.prompt.text}&rdquo;
+                </p>
+
+                {/* Winning photo */}
+                {currentRecap.winningSubmission ? (
+                  <>
+                    <div className="relative inline-block">
+                      <div className="bg-white p-2 pb-10 shadow-lg rotate-1 hover:rotate-0 transition-transform">
+                        <img
+                          src={currentRecap.winningSubmission.photo_url}
+                          alt="Winning submission"
+                          className="w-48 h-48 object-cover"
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-4 flex items-center justify-center gap-2 text-charcoal">
+                      <span className="font-medium">{currentRecap.winnerPlayer?.username ?? 'Unknown'}</span>
+                      <span className="text-charcoal-light">•</span>
+                      <span className="flex items-center gap-1">
+                        {currentRecap.voteCount}
+                        <Star size={14} className="text-gold" strokeWidth={1.5} fill="currentColor" />
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="py-8 text-charcoal-light font-light">
+                    No submissions this round
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Play Again */}
         {isHost ? (
