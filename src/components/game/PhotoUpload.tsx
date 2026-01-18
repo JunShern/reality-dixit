@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import type { Room, Prompt, Player, Submission } from '@/lib/types';
+import { Timer, Target, Camera, CheckCircle, Upload, Image, PartyPopper, Clock, Play } from 'lucide-react';
 
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -144,22 +145,22 @@ export function PhotoUpload({
             <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-2xl ${
               isTimeLow ? 'bg-coral/20 border-2 border-coral' : 'bg-teal/10 border-2 border-teal/30'
             }`}>
-              <span className="text-2xl">⏱️</span>
-              <span className={`text-3xl font-bold font-mono ${isTimeLow ? 'text-coral' : 'text-teal'}`}>
+              <Timer size={24} className={isTimeLow ? 'text-coral' : 'text-teal'} strokeWidth={1.5} />
+              <span className={`text-3xl font-medium font-mono ${isTimeLow ? 'text-coral' : 'text-teal'}`}>
                 {formatTime(timeLeft)}
               </span>
             </div>
-            <p className="text-gray-medium text-sm mt-2">Time remaining</p>
+            <p className="text-gray-medium text-sm mt-2 font-light">Time remaining</p>
           </div>
         )}
 
         {/* Prompt Display */}
         <div className="card-elevated p-5 mb-6">
-          <p className="text-teal text-sm font-semibold mb-2 flex items-center gap-2">
-            <span>🎯</span>
+          <p className="text-teal text-sm font-medium mb-2 flex items-center gap-2">
+            <Target size={16} strokeWidth={1.5} />
             <span>This round&apos;s prompt:</span>
           </p>
-          <p className="text-display text-2xl font-bold text-charcoal text-center">
+          <p className="text-2xl font-medium text-charcoal text-center">
             &quot;{currentPrompt?.text || 'Loading...'}&quot;
           </p>
         </div>
@@ -188,8 +189,8 @@ export function PhotoUpload({
                 {isUploading && (
                   <div className="absolute inset-0 bg-charcoal/60 flex items-center justify-center rounded-lg">
                     <div className="text-white flex items-center gap-2">
-                      <span className="animate-pulse-soft">📤</span>
-                      <span className="font-semibold">Uploading...</span>
+                      <Upload size={20} className="animate-pulse-soft" strokeWidth={1.5} />
+                      <span className="font-medium">Uploading...</span>
                     </div>
                   </div>
                 )}
@@ -201,11 +202,11 @@ export function PhotoUpload({
                 className="w-full aspect-square border-3 border-dashed border-coral/40 rounded-2xl flex flex-col items-center justify-center gap-4 hover:border-coral hover:bg-coral/5 transition-all"
               >
                 <div className="w-20 h-20 bg-coral/10 rounded-full flex items-center justify-center">
-                  <span className="text-4xl">📷</span>
+                  <Camera size={36} className="text-coral" strokeWidth={1.5} />
                 </div>
                 <div className="text-center">
-                  <p className="text-charcoal font-semibold">Tap to select a photo</p>
-                  <p className="text-gray-medium text-sm mt-1">from your camera roll</p>
+                  <p className="text-charcoal font-medium">Tap to select a photo</p>
+                  <p className="text-gray-medium text-sm mt-1 font-light">from your camera roll</p>
                 </div>
               </button>
             )}
@@ -213,8 +214,8 @@ export function PhotoUpload({
         ) : (
           <div className="card p-6 mb-6 bg-sage/10 border-2 border-sage/40">
             <div className="flex items-center gap-2 text-sage-dark mb-4">
-              <span className="text-xl">✅</span>
-              <span className="font-semibold">Photo Submitted!</span>
+              <CheckCircle size={20} strokeWidth={1.5} />
+              <span className="font-medium">Photo Submitted!</span>
             </div>
             {/* Polaroid-style frame */}
             <div className="bg-white p-3 pb-10 rounded-lg shadow-md">
@@ -231,7 +232,7 @@ export function PhotoUpload({
         <div className="card p-4 mb-6">
           <div className="flex justify-between items-center mb-3">
             <span className="text-charcoal-light text-sm font-medium flex items-center gap-2">
-              <span>📸</span>
+              <Image size={16} strokeWidth={1.5} />
               <span>Submissions</span>
             </span>
             <span className="badge badge-gold">{submissions.length}/{players.length}</span>
@@ -248,10 +249,10 @@ export function PhotoUpload({
         {isHost && allSubmitted && (
           <button
             onClick={onAdvancePhase}
-            className="btn btn-success w-full py-4 text-lg font-bold"
+            className="btn btn-success w-full py-4 text-lg font-medium"
           >
             <span className="flex items-center justify-center gap-2">
-              <span>🎉</span>
+              <PartyPopper size={20} strokeWidth={1.5} />
               <span>Everyone&apos;s Ready! Start Reveal</span>
             </span>
           </button>
@@ -260,17 +261,17 @@ export function PhotoUpload({
         {isHost && !allSubmitted && timeLeft === 0 && (
           <button
             onClick={onAdvancePhase}
-            className="btn w-full py-4 text-lg font-bold bg-gold text-white hover:bg-gold-light"
+            className="btn w-full py-4 text-lg font-medium bg-gold text-white hover:bg-gold-light"
           >
             <span className="flex items-center justify-center gap-2">
-              <span>⏰</span>
+              <Clock size={20} strokeWidth={1.5} />
               <span>Time&apos;s Up! Start Reveal</span>
             </span>
           </button>
         )}
 
         {!isHost && !mySubmission && (
-          <div className="text-center text-gray-medium text-sm">
+          <div className="text-center text-gray-medium text-sm font-light">
             <span>Quick! Find a matching photo before time runs out!</span>
           </div>
         )}

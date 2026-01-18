@@ -12,6 +12,37 @@ A web-based party game where players submit photos from their camera rolls to ma
 - **File Storage**: Supabase Storage
 - **Hosting**: Railway (frontend)
 
+## Design System
+
+### Typography
+- **Font Family**: DM Sans (elegant sans-serif for all text)
+- **Monospace**: JetBrains Mono (room codes only)
+- **Weight Strategy**:
+  - `font-light` (300) - body text, descriptions, waiting messages
+  - `font-medium` (500) - headings, buttons, emphasis
+  - `font-semibold` (600) - winner announcements only
+
+### Icons
+Using [Lucide React](https://lucide.dev/) for all icons with consistent styling:
+- `strokeWidth={1.5}` for elegant thin appearance
+- Common icons: Camera, Dice6, Target, Trophy, Star, Crown, Play, Clock, Timer, CheckCircle
+
+### Color Palette (CSS variables in globals.css)
+- `--cream` / `--cream-dark` - Background tones
+- `--coral` / `--coral-dark` - Primary actions, branding
+- `--teal` / `--teal-light` - Secondary actions, labels
+- `--gold` / `--gold-light` - Accents, badges, winners
+- `--sage` / `--sage-dark` - Success states
+- `--charcoal` / `--charcoal-light` - Text colors
+- `--gray-light` / `--gray-medium` - Borders, muted text
+
+### Component Patterns
+- Cards: `.card` (subtle) and `.card-elevated` (prominent)
+- Buttons: `.btn-primary`, `.btn-secondary`, `.btn-success`
+- Badges: `.badge-gold`, `.badge-silver`, `.badge-bronze`
+- Progress: `.progress-bar` with `.progress-fill`
+- Animations: `.animate-fade-in`, `.animate-pulse-soft`, `.stagger-children`
+
 ## Game Flow
 
 1. **Lobby Phase** (`waiting`)

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { generateRoomCode, generateSessionToken } from '@/lib/supabase';
 import { createClient } from '@supabase/supabase-js';
+import { Camera, Dice6, Target, FileText, Heart, Trophy } from 'lucide-react';
 
 // Create supabase client lazily to avoid build-time issues
 function getSupabase() {
@@ -173,16 +174,16 @@ export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-paper">
       <div className="w-full max-w-md animate-fade-in">
-        {/* Header with board game feel */}
+        {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center gap-3 mb-3">
-            <span className="text-3xl">📸</span>
-            <h1 className="text-display text-4xl font-bold text-charcoal tracking-tight">
+            <Camera size={28} className="text-coral" strokeWidth={1.5} />
+            <h1 className="text-3xl font-medium text-charcoal tracking-tight">
               Reality Dixit
             </h1>
-            <span className="text-3xl">🎲</span>
+            <Dice6 size={28} className="text-teal" strokeWidth={1.5} />
           </div>
-          <p className="text-charcoal-light font-body">
+          <p className="text-charcoal-light font-light">
             Match your photos to prompts
           </p>
         </div>
@@ -191,7 +192,7 @@ export default function Home() {
         <div className="card-elevated p-6 mb-6">
           {/* Username input */}
           <div className="mb-6">
-            <label htmlFor="username" className="block text-sm font-semibold text-teal mb-2">
+            <label htmlFor="username" className="block text-sm font-medium text-teal mb-2">
               Your Name
             </label>
             <input
@@ -207,7 +208,7 @@ export default function Home() {
 
           {/* Error message */}
           {error && (
-            <div className="mb-4 p-3 bg-coral-light/20 border-2 border-coral/30 rounded-xl text-coral-dark text-sm font-medium">
+            <div className="mb-4 p-3 bg-coral-light/20 border-2 border-coral/30 rounded-xl text-coral-dark text-sm">
               {error}
             </div>
           )}
@@ -224,7 +225,7 @@ export default function Home() {
               </span>
             ) : (
               <span className="flex items-center justify-center gap-2">
-                <span>🎯</span>
+                <Target size={20} strokeWidth={1.5} />
                 <span>Create New Room</span>
               </span>
             )}
@@ -233,7 +234,7 @@ export default function Home() {
           {/* Divider */}
           <div className="flex items-center my-5">
             <div className="flex-1 border-t-2 border-dashed border-gray-light"></div>
-            <span className="px-4 text-gray-medium text-sm font-medium">or join existing</span>
+            <span className="px-4 text-gray-medium text-sm">or join existing</span>
             <div className="flex-1 border-t-2 border-dashed border-gray-light"></div>
           </div>
 
@@ -259,37 +260,39 @@ export default function Home() {
 
         {/* How to play card */}
         <div className="card p-5">
-          <h2 className="text-display text-lg font-bold text-teal mb-3 flex items-center gap-2">
-            <span>🃏</span>
+          <h2 className="text-lg font-medium text-teal mb-3 flex items-center gap-2">
+            <FileText size={20} strokeWidth={1.5} />
             <span>How to Play</span>
           </h2>
           <ol className="text-charcoal-light text-sm space-y-2 stagger-children">
             <li className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-coral text-white text-xs font-bold flex items-center justify-center">1</span>
-              <span>Create or join a room with friends</span>
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-coral text-white text-xs font-medium flex items-center justify-center">1</span>
+              <span className="font-light">Create or join a room with friends</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-coral text-white text-xs font-bold flex items-center justify-center">2</span>
-              <span>Everyone submits a prompt</span>
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-coral text-white text-xs font-medium flex items-center justify-center">2</span>
+              <span className="font-light">Everyone submits a prompt</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-coral text-white text-xs font-bold flex items-center justify-center">3</span>
-              <span>Each round, upload a photo matching the prompt</span>
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-coral text-white text-xs font-medium flex items-center justify-center">3</span>
+              <span className="font-light">Each round, upload a photo matching the prompt</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-coral text-white text-xs font-bold flex items-center justify-center">4</span>
-              <span>Vote for the best photo (not your own!)</span>
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-coral text-white text-xs font-medium flex items-center justify-center">4</span>
+              <span className="font-light">Vote for the best photo (not your own!)</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-coral text-white text-xs font-bold flex items-center justify-center">5</span>
-              <span>Most votes wins! 🏆</span>
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-coral text-white text-xs font-medium flex items-center justify-center">5</span>
+              <span className="font-light flex items-center gap-1">Most votes wins! <Trophy size={14} strokeWidth={1.5} className="text-gold" /></span>
             </li>
           </ol>
         </div>
 
         {/* Footer decoration */}
-        <div className="mt-6 text-center text-gray-medium text-xs">
-          <span>Made with ❤️ for game nights</span>
+        <div className="mt-6 text-center text-gray-medium text-xs font-light flex items-center justify-center gap-1">
+          <span>Made with</span>
+          <Heart size={12} className="text-coral" fill="currentColor" />
+          <span>for game nights</span>
         </div>
       </div>
     </main>

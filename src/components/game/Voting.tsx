@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { Room, Prompt, Player, Vote, SubmissionWithVotes } from '@/lib/types';
+import { Target, CheckCircle, Star, Trophy, Vote as VoteIcon, SkipForward } from 'lucide-react';
 
 interface VotingProps {
   room: Room;
@@ -73,11 +74,11 @@ export function Voting({
 
         {/* Prompt Display */}
         <div className="card-elevated p-5 mb-6">
-          <p className="text-teal text-sm font-semibold mb-2 flex items-center justify-center gap-2">
-            <span>🎯</span>
+          <p className="text-teal text-sm font-medium mb-2 flex items-center justify-center gap-2">
+            <Target size={16} strokeWidth={1.5} />
             <span>The Prompt</span>
           </p>
-          <p className="text-display text-xl font-bold text-charcoal text-center">
+          <p className="text-xl font-medium text-charcoal text-center">
             &quot;{currentPrompt?.text || 'Loading...'}&quot;
           </p>
         </div>
@@ -86,12 +87,12 @@ export function Voting({
         <div className="text-center mb-6">
           {myVote ? (
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-sage/20 rounded-full text-sage-dark font-medium">
-              <span>✅</span>
+              <CheckCircle size={18} strokeWidth={1.5} />
               <span>You&apos;ve voted! Waiting for others...</span>
             </div>
           ) : (
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-coral/10 rounded-full text-coral font-medium">
-              <span>⭐</span>
+              <Star size={18} strokeWidth={1.5} />
               <span>Vote for the best photo!</span>
             </div>
           )}
@@ -135,18 +136,18 @@ export function Voting({
 
                   {/* Vote Info */}
                   <div className="flex-1 flex flex-col justify-center">
-                    <div className="text-2xl font-bold text-charcoal flex items-center gap-1">
+                    <div className="text-2xl font-medium text-charcoal flex items-center gap-1">
                       <span>{submission.voteCount}</span>
-                      <span className="text-gold text-lg">⭐</span>
+                      <Star size={18} className="text-gold" strokeWidth={1.5} fill="currentColor" />
                     </div>
-                    <span className="text-charcoal-light text-sm">
+                    <span className="text-charcoal-light text-sm font-light">
                       {submission.voteCount === 1 ? 'vote' : 'votes'}
                     </span>
                     {isOwn && (
                       <span className="text-coral text-xs font-medium mt-1">Your photo</span>
                     )}
                     {isVoted && (
-                      <span className="text-sage-dark text-xs font-medium mt-1">Your vote ✓</span>
+                      <span className="text-sage-dark text-xs font-medium mt-1 flex items-center gap-1">Your vote <CheckCircle size={12} strokeWidth={2} /></span>
                     )}
                   </div>
 
@@ -161,7 +162,7 @@ export function Voting({
                           <span className="animate-pulse-soft">...</span>
                         ) : (
                           <span className="flex items-center gap-1">
-                            <span>⭐</span>
+                            <Star size={14} strokeWidth={1.5} />
                             <span>Vote</span>
                           </span>
                         )}
@@ -178,7 +179,7 @@ export function Voting({
         <div className="card p-4 mb-6">
           <div className="flex justify-between items-center mb-3">
             <span className="text-charcoal-light text-sm font-medium flex items-center gap-2">
-              <span>🗳️</span>
+              <VoteIcon size={16} strokeWidth={1.5} />
               <span>Votes cast</span>
             </span>
             <span className="badge badge-gold">{votesCast}/{votesNeeded}</span>
@@ -195,10 +196,10 @@ export function Voting({
         {isHost && allVoted && (
           <button
             onClick={onAdvancePhase}
-            className="btn btn-success w-full py-4 text-lg font-bold"
+            className="btn btn-success w-full py-4 text-lg font-medium"
           >
             <span className="flex items-center justify-center gap-2">
-              <span>🏆</span>
+              <Trophy size={20} strokeWidth={1.5} />
               <span>Show Results!</span>
             </span>
           </button>
@@ -207,17 +208,17 @@ export function Voting({
         {isHost && !allVoted && (
           <button
             onClick={onAdvancePhase}
-            className="btn w-full py-4 text-lg font-bold bg-gold/70 text-white hover:bg-gold"
+            className="btn w-full py-4 text-lg font-medium bg-gold/70 text-white hover:bg-gold"
           >
             <span className="flex items-center justify-center gap-2">
-              <span>⏭️</span>
+              <SkipForward size={20} strokeWidth={1.5} />
               <span>Skip to Results</span>
             </span>
           </button>
         )}
 
         {!isHost && !myVote && (
-          <div className="text-center text-gray-medium text-sm">
+          <div className="text-center text-gray-medium text-sm font-light">
             <span>Can&apos;t vote for your own photo!</span>
           </div>
         )}

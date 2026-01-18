@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { Player } from '@/lib/types';
+import { Gamepad2, Trophy, Star, Crown, BarChart3, RotateCcw, Clock, HelpCircle, Dice6 } from 'lucide-react';
 
 interface FinalScoresProps {
   players: Player[];
@@ -31,40 +32,40 @@ export function FinalScores({ players, isHost, onPlayAgain }: FinalScoresProps) 
       <div className="w-full max-w-md animate-fade-in">
         {/* Header */}
         <div className="text-center mb-6">
-          <span className="text-4xl">🎮</span>
-          <h1 className="text-display text-3xl font-bold text-charcoal mt-2">Game Over!</h1>
+          <Gamepad2 size={40} className="text-coral mx-auto" strokeWidth={1.5} />
+          <h1 className="text-3xl font-medium text-charcoal mt-2">Game Over!</h1>
         </div>
 
         {/* Winner Announcement */}
         {hasWinner && (
           <div className="card-elevated p-8 mb-6 bg-gold/10 border-2 border-gold text-center">
-            <div className="text-6xl mb-4">🏆</div>
-            <div className="text-display text-2xl font-bold text-charcoal mb-2">
+            <Trophy size={48} className="text-gold mx-auto mb-4" strokeWidth={1.5} />
+            <div className="text-2xl font-semibold text-charcoal mb-2">
               {winner.username}
             </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-gold/20 rounded-full">
-              <span className="text-gold font-bold text-lg">{winner.score}</span>
-              <span className="text-gold">⭐</span>
+              <span className="text-gold font-semibold text-lg">{winner.score}</span>
+              <Star size={18} className="text-gold" strokeWidth={1.5} fill="currentColor" />
               <span className="text-charcoal-light">{winner.score !== 1 ? 'points' : 'point'}</span>
             </div>
-            <p className="text-charcoal-light mt-3 text-sm">Champion of the game!</p>
+            <p className="text-charcoal-light mt-3 text-sm font-light">Champion of the game!</p>
           </div>
         )}
 
         {!hasWinner && (
           <div className="card-elevated p-6 mb-6 text-center">
-            <div className="text-4xl mb-4">🤷</div>
-            <div className="text-display text-xl text-charcoal">
+            <HelpCircle size={40} className="text-charcoal-light mx-auto mb-4" strokeWidth={1.5} />
+            <div className="text-xl text-charcoal font-medium">
               No votes were cast!
             </div>
-            <p className="text-charcoal-light mt-2 text-sm">Better luck next time!</p>
+            <p className="text-charcoal-light mt-2 text-sm font-light">Better luck next time!</p>
           </div>
         )}
 
         {/* Leaderboard */}
         <div className="card p-5 mb-6">
-          <h2 className="text-display text-lg font-bold text-teal mb-4 flex items-center gap-2">
-            <span>📊</span>
+          <h2 className="text-lg font-medium text-teal mb-4 flex items-center gap-2">
+            <BarChart3 size={20} strokeWidth={1.5} />
             <span>Final Standings</span>
           </h2>
           <div className="space-y-3 stagger-children">
@@ -86,7 +87,7 @@ export function FinalScores({ players, isHost, onPlayAgain }: FinalScoresProps) 
                     rank === 3 ? 'rank-3' :
                     'rank-other'
                   }`}>
-                    {rank === 1 ? '👑' : rank}
+                    {rank === 1 ? <Crown size={16} strokeWidth={2} /> : rank}
                   </div>
 
                   {/* Name */}
@@ -106,9 +107,9 @@ export function FinalScores({ players, isHost, onPlayAgain }: FinalScoresProps) 
                   </div>
 
                   {/* Score */}
-                  <div className={`font-bold flex items-center gap-1 ${isWinner ? 'text-gold' : 'text-charcoal'}`}>
+                  <div className={`font-medium flex items-center gap-1 ${isWinner ? 'text-gold' : 'text-charcoal'}`}>
                     <span>{player.score}</span>
-                    <span className="text-gold text-sm">⭐</span>
+                    <Star size={14} className="text-gold" strokeWidth={1.5} fill="currentColor" />
                   </div>
                 </div>
               );
@@ -121,29 +122,30 @@ export function FinalScores({ players, isHost, onPlayAgain }: FinalScoresProps) 
           <button
             onClick={handlePlayAgain}
             disabled={isResetting}
-            className="btn btn-primary w-full py-4 text-lg font-bold"
+            className="btn btn-primary w-full py-4 text-lg font-medium"
           >
             {isResetting ? (
               <span className="animate-pulse-soft">Resetting...</span>
             ) : (
               <span className="flex items-center justify-center gap-2">
-                <span>🔄</span>
+                <RotateCcw size={20} strokeWidth={1.5} />
                 <span>Play Again</span>
               </span>
             )}
           </button>
         ) : (
           <div className="card p-4 text-center">
-            <p className="text-charcoal-light flex items-center justify-center gap-2">
-              <span className="animate-pulse-soft">⏳</span>
+            <p className="text-charcoal-light font-light flex items-center justify-center gap-2">
+              <Clock size={16} className="animate-pulse-soft" strokeWidth={1.5} />
               <span>Waiting for host to start new game...</span>
             </p>
           </div>
         )}
 
         {/* Footer */}
-        <div className="mt-6 text-center text-gray-medium text-xs">
-          <span>Thanks for playing! 🎲</span>
+        <div className="mt-6 text-center text-gray-medium text-xs font-light flex items-center justify-center gap-1">
+          <span>Thanks for playing!</span>
+          <Dice6 size={12} strokeWidth={1.5} />
         </div>
       </div>
     </div>

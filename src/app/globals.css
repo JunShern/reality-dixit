@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -29,8 +29,7 @@
   --success: var(--sage);
   --border: var(--gray-light);
 
-  /* Typography */
-  --font-display: 'Fraunces', Georgia, serif;
+  /* Typography - elegant sans-serif only */
   --font-body: 'DM Sans', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
@@ -53,7 +52,6 @@
   --color-charcoal-light: var(--charcoal-light);
   --color-gray-light: var(--gray-light);
   --color-gray-medium: var(--gray-medium);
-  --font-display: var(--font-display);
   --font-body: var(--font-body);
   --font-mono: var(--font-mono);
 }
@@ -63,6 +61,7 @@ body {
   background: var(--cream);
   color: var(--charcoal);
   font-family: var(--font-body);
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -95,17 +94,10 @@ body {
   border: 1px solid var(--gray-light);
 }
 
-/* Display typography */
-.text-display {
-  font-family: var(--font-display);
-  font-optical-sizing: auto;
-  font-variation-settings: "SOFT" 50, "WONK" 1;
-}
-
-/* Button base styles */
+/* Button base styles - refined weights */
 .btn {
   font-family: var(--font-body);
-  font-weight: 600;
+  font-weight: 500;
   border-radius: 0.75rem;
   transition: all 150ms ease;
   cursor: pointer;
@@ -149,6 +141,7 @@ body {
 /* Input styles */
 .input {
   font-family: var(--font-body);
+  font-weight: 400;
   background: white;
   border: 2px solid var(--gray-light);
   border-radius: 0.75rem;
@@ -163,13 +156,14 @@ body {
 
 .input::placeholder {
   color: var(--gray-medium);
+  font-weight: 300;
 }
 
 /* Room code styling */
 .room-code {
   font-family: var(--font-mono);
   letter-spacing: 0.2em;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* Progress bar */
@@ -185,10 +179,10 @@ body {
   transition: width 300ms ease;
 }
 
-/* Badge styles */
+/* Badge styles - lighter weight */
 .badge {
   font-family: var(--font-body);
-  font-weight: 600;
+  font-weight: 500;
   font-size: 0.75rem;
   padding: 0.25rem 0.625rem;
   border-radius: 9999px;
@@ -209,7 +203,7 @@ body {
   color: #4A2C00;
 }
 
-/* Rank circle */
+/* Rank circle - lighter weight */
 .rank-circle {
   width: 2rem;
   height: 2rem;
@@ -217,7 +211,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 0.875rem;
 }
 

@@ -9,6 +9,7 @@ import { PhotoReveal } from '@/components/game/PhotoReveal';
 import { Voting } from '@/components/game/Voting';
 import { RoundResults } from '@/components/game/RoundResults';
 import { FinalScores } from '@/components/game/FinalScores';
+import { Dice6, AlertCircle, Search } from 'lucide-react';
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -41,8 +42,8 @@ export default function RoomPage({ params }: PageProps) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-paper">
         <div className="text-charcoal text-xl flex items-center gap-2">
-          <span className="animate-pulse-soft">🎲</span>
-          <span>Loading...</span>
+          <Dice6 size={24} className="animate-pulse-soft text-coral" strokeWidth={1.5} />
+          <span className="font-light">Loading...</span>
         </div>
       </main>
     );
@@ -52,8 +53,8 @@ export default function RoomPage({ params }: PageProps) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center bg-paper p-4">
         <div className="card-elevated p-6 text-center max-w-md">
-          <span className="text-3xl mb-4 block">😕</span>
-          <div className="text-coral text-xl mb-4">{error}</div>
+          <AlertCircle size={32} className="text-coral mx-auto mb-4" strokeWidth={1.5} />
+          <div className="text-coral text-xl mb-4 font-light">{error}</div>
           <a href="/" className="btn btn-primary inline-block px-6 py-2">Return to home</a>
         </div>
       </main>
@@ -64,8 +65,8 @@ export default function RoomPage({ params }: PageProps) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center bg-paper p-4">
         <div className="card-elevated p-6 text-center max-w-md">
-          <span className="text-3xl mb-4 block">🔍</span>
-          <div className="text-charcoal text-xl mb-4">Room not found</div>
+          <Search size={32} className="text-teal mx-auto mb-4" strokeWidth={1.5} />
+          <div className="text-charcoal text-xl mb-4 font-light">Room not found</div>
           <a href="/" className="btn btn-primary inline-block px-6 py-2">Return to home</a>
         </div>
       </main>
@@ -182,7 +183,7 @@ export default function RoomPage({ params }: PageProps) {
             );
 
           default:
-            return <div className="text-white">Unknown phase</div>;
+            return <div className="text-charcoal">Unknown phase</div>;
         }
 
       case 'finished':
@@ -195,7 +196,7 @@ export default function RoomPage({ params }: PageProps) {
         );
 
       default:
-        return <div className="text-white">Unknown game state</div>;
+        return <div className="text-charcoal">Unknown game state</div>;
     }
   };
 

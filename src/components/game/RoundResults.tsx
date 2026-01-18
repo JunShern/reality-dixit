@@ -1,6 +1,7 @@
 'use client';
 
 import type { Room, Prompt, Player, SubmissionWithVotes } from '@/lib/types';
+import { Target, Trophy, Star, BarChart3, Play, Clock } from 'lucide-react';
 
 interface RoundResultsProps {
   room: Room;
@@ -45,11 +46,11 @@ export function RoundResults({
 
         {/* Prompt Display */}
         <div className="card-elevated p-5 mb-6">
-          <p className="text-teal text-sm font-semibold mb-2 flex items-center justify-center gap-2">
-            <span>🎯</span>
+          <p className="text-teal text-sm font-medium mb-2 flex items-center justify-center gap-2">
+            <Target size={16} strokeWidth={1.5} />
             <span>The Prompt</span>
           </p>
-          <p className="text-display text-xl font-bold text-charcoal text-center">
+          <p className="text-xl font-medium text-charcoal text-center">
             &quot;{currentPrompt?.text || 'Loading...'}&quot;
           </p>
         </div>
@@ -58,8 +59,8 @@ export function RoundResults({
         {hasWinner && (
           <div className="card-elevated p-6 mb-6 bg-gold/10 border-2 border-gold">
             <div className="text-center mb-4">
-              <span className="text-3xl">🏆</span>
-              <h3 className="text-display text-xl font-bold text-charcoal mt-2">Round Winner!</h3>
+              <Trophy size={36} className="text-gold mx-auto" strokeWidth={1.5} />
+              <h3 className="text-xl font-medium text-charcoal mt-2">Round Winner!</h3>
             </div>
             <div className="flex flex-col items-center gap-4">
               {/* Winner's photo - polaroid style */}
@@ -71,10 +72,10 @@ export function RoundResults({
                 />
               </div>
               <div className="text-center">
-                <p className="text-display text-xl font-bold text-charcoal">{getPlayerName(winner.player_id)}</p>
-                <p className="text-gold font-semibold flex items-center justify-center gap-1">
+                <p className="text-xl font-medium text-charcoal">{getPlayerName(winner.player_id)}</p>
+                <p className="text-gold font-medium flex items-center justify-center gap-1">
                   <span>{winner.voteCount}</span>
-                  <span>⭐</span>
+                  <Star size={16} strokeWidth={1.5} fill="currentColor" />
                   <span>{winner.voteCount === 1 ? 'vote' : 'votes'}</span>
                 </p>
               </div>
@@ -114,12 +115,12 @@ export function RoundResults({
 
                   {/* Info */}
                   <div className="flex-1">
-                    <div className="text-charcoal font-semibold">
+                    <div className="text-charcoal font-medium">
                       {playerName}
                     </div>
-                    <div className="text-charcoal-light text-sm flex items-center gap-1">
+                    <div className="text-charcoal-light text-sm flex items-center gap-1 font-light">
                       <span>{submission.voteCount}</span>
-                      <span className="text-gold">⭐</span>
+                      <Star size={14} className="text-gold" strokeWidth={1.5} fill="currentColor" />
                       <span>{submission.voteCount === 1 ? 'vote' : 'votes'}</span>
                     </div>
                   </div>
@@ -131,8 +132,8 @@ export function RoundResults({
 
         {/* Points Summary */}
         <div className="card p-5 mb-6">
-          <h3 className="text-display text-lg font-bold text-teal mb-4 flex items-center gap-2">
-            <span>📊</span>
+          <h3 className="text-lg font-medium text-teal mb-4 flex items-center gap-2">
+            <BarChart3 size={20} strokeWidth={1.5} />
             <span>Points Earned This Round</span>
           </h3>
           <div className="space-y-2">
@@ -141,9 +142,9 @@ export function RoundResults({
               return (
                 <div key={submission.id} className="flex justify-between items-center p-2 rounded-lg bg-cream-dark">
                   <span className="text-charcoal-light font-medium">{playerName}</span>
-                  <span className="font-bold text-sage flex items-center gap-1">
+                  <span className="font-medium text-sage flex items-center gap-1">
                     <span>+{submission.voteCount}</span>
-                    <span className="text-gold">⭐</span>
+                    <Star size={14} className="text-gold" strokeWidth={1.5} fill="currentColor" />
                   </span>
                 </div>
               );
@@ -155,16 +156,16 @@ export function RoundResults({
         {isHost && (
           <button
             onClick={onNextRound}
-            className="btn btn-success w-full py-4 text-lg font-bold"
+            className="btn btn-success w-full py-4 text-lg font-medium"
           >
             {isLastRound ? (
               <span className="flex items-center justify-center gap-2">
-                <span>🏆</span>
+                <Trophy size={20} strokeWidth={1.5} />
                 <span>See Final Scores!</span>
               </span>
             ) : (
               <span className="flex items-center justify-center gap-2">
-                <span>▶️</span>
+                <Play size={20} strokeWidth={1.5} />
                 <span>Next Round ({room.current_round + 1}/{totalRounds})</span>
               </span>
             )}
@@ -173,8 +174,8 @@ export function RoundResults({
 
         {!isHost && (
           <div className="card p-4 text-center">
-            <p className="text-charcoal-light flex items-center justify-center gap-2">
-              <span className="animate-pulse-soft">⏳</span>
+            <p className="text-charcoal-light font-light flex items-center justify-center gap-2">
+              <Clock size={16} className="animate-pulse-soft" strokeWidth={1.5} />
               <span>
                 {isLastRound
                   ? 'Waiting for host to show final scores...'

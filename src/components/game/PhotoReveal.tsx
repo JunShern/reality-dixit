@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import type { Room, Prompt, Submission, Player } from '@/lib/types';
+import { Target, Image, Sparkles, Star, Clock, Timer } from 'lucide-react';
 
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -96,11 +97,11 @@ export function PhotoReveal({
 
         {/* Prompt Display */}
         <div className="card-elevated p-5 mb-6">
-          <p className="text-teal text-sm font-semibold mb-2 flex items-center justify-center gap-2">
-            <span>🎯</span>
+          <p className="text-teal text-sm font-medium mb-2 flex items-center justify-center gap-2">
+            <Target size={16} strokeWidth={1.5} />
             <span>The Prompt</span>
           </p>
-          <p className="text-display text-xl font-bold text-charcoal text-center">
+          <p className="text-xl font-medium text-charcoal text-center">
             &quot;{currentPrompt?.text || 'Loading...'}&quot;
           </p>
         </div>
@@ -134,8 +135,8 @@ export function PhotoReveal({
         {/* Revealed Photos (Thumbnails) */}
         {revealedSubmissions.length > 0 && !revealComplete && (
           <div className="mb-6">
-            <p className="text-charcoal-light text-sm mb-3 flex items-center gap-2">
-              <span>📸</span>
+            <p className="text-charcoal-light text-sm mb-3 flex items-center gap-2 font-light">
+              <Image size={16} strokeWidth={1.5} />
               <span>Previous reveals:</span>
             </p>
             <div className="grid grid-cols-4 gap-2">
@@ -156,10 +157,10 @@ export function PhotoReveal({
         {revealComplete && (
           <div className="mb-6">
             <div className="card p-4 bg-sage/10 border-2 border-sage/40 mb-4">
-              <p className="text-sage-dark text-center font-semibold flex items-center justify-center gap-2">
-                <span>✨</span>
+              <p className="text-sage-dark text-center font-medium flex items-center justify-center gap-2">
+                <Sparkles size={16} strokeWidth={1.5} />
                 <span>All photos revealed!</span>
-                <span>✨</span>
+                <Sparkles size={16} strokeWidth={1.5} />
               </p>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -184,10 +185,10 @@ export function PhotoReveal({
         {isHost && revealComplete && (
           <button
             onClick={onAdvancePhase}
-            className="btn btn-success w-full py-4 text-lg font-bold"
+            className="btn btn-success w-full py-4 text-lg font-medium"
           >
             <span className="flex items-center justify-center gap-2">
-              <span>⭐</span>
+              <Star size={20} strokeWidth={1.5} />
               <span>Start Voting!</span>
             </span>
           </button>
@@ -195,8 +196,8 @@ export function PhotoReveal({
 
         {!isHost && revealComplete && (
           <div className="card p-4 text-center">
-            <p className="text-charcoal-light flex items-center justify-center gap-2">
-              <span className="animate-pulse-soft">⏳</span>
+            <p className="text-charcoal-light font-light flex items-center justify-center gap-2">
+              <Clock size={16} className="animate-pulse-soft" strokeWidth={1.5} />
               <span>Waiting for host to start voting...</span>
             </p>
           </div>
@@ -206,8 +207,8 @@ export function PhotoReveal({
         {!revealComplete && (
           <div className="text-center">
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-teal/10 rounded-2xl border-2 border-teal/30">
-              <span className="text-xl">⏱️</span>
-              <span className="text-4xl font-bold text-teal font-mono">{countdown}</span>
+              <Timer size={24} className="text-teal" strokeWidth={1.5} />
+              <span className="text-4xl font-medium text-teal font-mono">{countdown}</span>
             </div>
           </div>
         )}
