@@ -167,7 +167,15 @@ export function useRoom(roomCode: string): UseRoomResult {
         filter: `code=eq.${roomCode}`,
       }, (payload) => {
         if (payload.eventType === 'UPDATE') {
-          setRoom(payload.new as Room);
+          const newRoom = payload.new as Room;
+          setRoom(newRoom);
+
+          // If room reset to waiting state (Play Again), clear game data
+          if (newRoom.status === 'waiting' && newRoom.current_round === 0) {
+            setPrompts([]);
+            setSubmissions([]);
+            setVotes([]);
+          }
         }
       })
       .on('postgres_changes', {

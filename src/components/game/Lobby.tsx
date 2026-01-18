@@ -12,7 +12,7 @@ interface LobbyProps {
 }
 
 export function Lobby({ room, players, myPlayer, isHost, onStartGame }: LobbyProps) {
-  const canStart = players.length >= 3;
+  const canStart = players.length >= 2;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-paper">
@@ -71,11 +71,11 @@ export function Lobby({ room, players, myPlayer, isHost, onStartGame }: LobbyPro
             ))}
           </ul>
 
-          {players.length < 3 && (
+          {players.length < 2 && (
             <div className="mt-4 p-3 bg-gold-light/20 border-2 border-dashed border-gold/40 rounded-xl text-center">
               <p className="text-charcoal-light text-sm font-light flex items-center justify-center gap-2">
                 <Clock size={16} strokeWidth={1.5} className="text-gold" />
-                Waiting for {3 - players.length} more player{3 - players.length !== 1 ? 's' : ''}...
+                Waiting for {2 - players.length} more player{2 - players.length !== 1 ? 's' : ''}...
               </p>
             </div>
           )}
@@ -98,7 +98,7 @@ export function Lobby({ room, players, myPlayer, isHost, onStartGame }: LobbyPro
                 <span>Start Game</span>
               </span>
             ) : (
-              <span className="font-light">Need {3 - players.length} more player{3 - players.length !== 1 ? 's' : ''}</span>
+              <span className="font-light">Need {2 - players.length} more player{2 - players.length !== 1 ? 's' : ''}</span>
             )}
           </button>
         )}
