@@ -41,6 +41,7 @@ interface UseRoomResult {
   submitVote: (submissionId: string) => Promise<void>;
   advancePhase: () => Promise<void>;
   nextRound: () => Promise<void>;
+  playAgain: () => Promise<void>;
 }
 
 export function useRoom(roomCode: string): UseRoomResult {
@@ -195,6 +196,8 @@ export function useRoom(roomCode: string): UseRoomResult {
           setPrompts(prev => [...prev, payload.new as Prompt]);
         } else if (payload.eventType === 'UPDATE') {
           setPrompts(prev => prev.map(p => p.id === (payload.new as Prompt).id ? payload.new as Prompt : p));
+        } else if (payload.eventType === 'DELETE') {
+          setPrompts(prev => prev.filter(p => p.id !== (payload.old as Prompt).id));
         }
       })
       .on('postgres_changes', {
@@ -204,6 +207,8 @@ export function useRoom(roomCode: string): UseRoomResult {
       }, (payload) => {
         if (payload.eventType === 'INSERT') {
           setSubmissions(prev => [...prev, payload.new as Submission]);
+        } else if (payload.eventType === 'DELETE') {
+          setSubmissions(prev => prev.filter(s => s.id !== (payload.old as Submission).id));
         }
       })
       .on('postgres_changes', {
@@ -213,6 +218,8 @@ export function useRoom(roomCode: string): UseRoomResult {
       }, (payload) => {
         if (payload.eventType === 'INSERT') {
           setVotes(prev => [...prev, payload.new as Vote]);
+        } else if (payload.eventType === 'DELETE') {
+          setVotes(prev => prev.filter(v => v.id !== (payload.old as Vote).id));
         }
       })
       .subscribe();
@@ -340,6 +347,40 @@ export function useRoom(roomCode: string): UseRoomResult {
     }
   }, [room, isHost, players, votes, submissions]);
 
+  const playAgain = useCallback(async () => {
+    if (!room || !isHost) return;
+
+    const supabase = getSupabase();
+
+    // Delete all game data for this room
+    await supabase.from('votes').delete().eq('room_id', room.id);
+    await supabase.from('submissions').delete().eq('room_id', room.id);
+    await supabase.from('prompts').delete().eq('room_id', room.id);
+
+    // Reset all player scores to 0
+    await supabase
+      .from('players')
+      .update({ score: 0 })
+      .eq('room_id', room.id);
+
+    // Reset room to waiting state
+    await supabase
+      .from('rooms')
+      .update({
+        status: 'waiting',
+        current_round: 0,
+        round_phase: null,
+        reveal_index: 0,
+        phase_end_time: null,
+      })
+      .eq('id', room.id);
+
+    // Clear local state
+    setPrompts([]);
+    setSubmissions([]);
+    setVotes([]);
+  }, [room, isHost]);
+
   return {
     room,
     players,
@@ -359,5 +400,6 @@ export function useRoom(roomCode: string): UseRoomResult {
     submitVote,
     advancePhase,
     nextRound,
+    playAgain,
   };
 }

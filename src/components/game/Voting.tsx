@@ -62,18 +62,22 @@ export function Voting({
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-lg">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-paper">
+      <div className="w-full max-w-lg animate-fade-in">
         {/* Round indicator */}
         <div className="text-center mb-4">
-          <span className="text-purple-300 text-sm">
+          <span className="badge badge-gold">
             Round {room.current_round} of {totalRounds}
           </span>
         </div>
 
         {/* Prompt Display */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 shadow-xl mb-6">
-          <p className="text-xl font-bold text-white text-center">
+        <div className="card-elevated p-5 mb-6">
+          <p className="text-teal text-sm font-semibold mb-2 flex items-center justify-center gap-2">
+            <span>🎯</span>
+            <span>The Prompt</span>
+          </p>
+          <p className="text-display text-xl font-bold text-charcoal text-center">
             &quot;{currentPrompt?.text || 'Loading...'}&quot;
           </p>
         </div>
@@ -81,9 +85,15 @@ export function Voting({
         {/* Voting Status */}
         <div className="text-center mb-6">
           {myVote ? (
-            <span className="text-green-300">You&apos;ve voted! Waiting for others...</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-sage/20 rounded-full text-sage-dark font-medium">
+              <span>✅</span>
+              <span>You&apos;ve voted! Waiting for others...</span>
+            </div>
           ) : (
-            <span className="text-purple-200">Vote for the best photo (can&apos;t vote for your own!)</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-coral/10 rounded-full text-coral font-medium">
+              <span>⭐</span>
+              <span>Vote for the best photo!</span>
+            </div>
           )}
         </div>
 
@@ -98,41 +108,45 @@ export function Voting({
             return (
               <div
                 key={submission.id}
-                className={`relative bg-white/10 backdrop-blur-sm rounded-xl p-3 transition-all ${
-                  canVote ? 'cursor-pointer hover:bg-white/20' : ''
-                } ${isVoted ? 'ring-2 ring-green-400' : ''} ${isOwn ? 'opacity-60' : ''}`}
+                className={`relative card p-3 transition-all ${
+                  canVote ? 'cursor-pointer hover:shadow-lg hover:border-coral' : ''
+                } ${isVoted ? 'border-2 border-sage bg-sage/5' : ''} ${isOwn ? 'opacity-60' : ''}`}
                 onClick={() => canVote && handleVote(submission.id)}
               >
                 <div className="flex gap-4">
                   {/* Rank */}
-                  <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                    rank === 1 ? 'bg-yellow-500 text-yellow-900' :
-                    rank === 2 ? 'bg-gray-300 text-gray-700' :
-                    rank === 3 ? 'bg-orange-400 text-orange-900' :
-                    'bg-white/20 text-white'
+                  <div className={`flex-shrink-0 rank-circle ${
+                    rank === 1 ? 'rank-1' :
+                    rank === 2 ? 'rank-2' :
+                    rank === 3 ? 'rank-3' :
+                    'rank-other'
                   }`}>
                     {rank}
                   </div>
 
                   {/* Photo */}
-                  <div className="flex-shrink-0 w-20 h-20">
+                  <div className="flex-shrink-0 w-20 h-20 bg-white p-1 rounded-lg shadow-sm">
                     <img
                       src={submission.photo_url}
                       alt={`Submission ${idx + 1}`}
-                      className="w-full h-full object-cover rounded-lg"
+                      className="w-full h-full object-cover rounded"
                     />
                   </div>
 
                   {/* Vote Info */}
                   <div className="flex-1 flex flex-col justify-center">
-                    <div className="text-2xl font-bold text-white">
-                      {submission.voteCount} vote{submission.voteCount !== 1 ? 's' : ''}
+                    <div className="text-2xl font-bold text-charcoal flex items-center gap-1">
+                      <span>{submission.voteCount}</span>
+                      <span className="text-gold text-lg">⭐</span>
                     </div>
+                    <span className="text-charcoal-light text-sm">
+                      {submission.voteCount === 1 ? 'vote' : 'votes'}
+                    </span>
                     {isOwn && (
-                      <span className="text-purple-300 text-sm">Your photo</span>
+                      <span className="text-coral text-xs font-medium mt-1">Your photo</span>
                     )}
                     {isVoted && (
-                      <span className="text-green-300 text-sm">Your vote</span>
+                      <span className="text-sage-dark text-xs font-medium mt-1">Your vote ✓</span>
                     )}
                   </div>
 
@@ -140,10 +154,17 @@ export function Voting({
                   {canVote && (
                     <div className="flex items-center">
                       <button
-                        className="px-4 py-2 bg-purple-500 hover:bg-purple-400 text-white rounded-lg text-sm font-semibold transition-colors"
+                        className="btn btn-primary px-4 py-2 text-sm"
                         disabled={isVoting && selectedId === submission.id}
                       >
-                        {isVoting && selectedId === submission.id ? '...' : 'Vote'}
+                        {isVoting && selectedId === submission.id ? (
+                          <span className="animate-pulse-soft">...</span>
+                        ) : (
+                          <span className="flex items-center gap-1">
+                            <span>⭐</span>
+                            <span>Vote</span>
+                          </span>
+                        )}
                       </button>
                     </div>
                   )}
@@ -154,14 +175,17 @@ export function Voting({
         </div>
 
         {/* Voting Progress */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 shadow-xl mb-6">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-purple-200 text-sm">Votes cast</span>
-            <span className="text-white font-semibold">{votesCast}/{votesNeeded}</span>
+        <div className="card p-4 mb-6">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-charcoal-light text-sm font-medium flex items-center gap-2">
+              <span>🗳️</span>
+              <span>Votes cast</span>
+            </span>
+            <span className="badge badge-gold">{votesCast}/{votesNeeded}</span>
           </div>
-          <div className="w-full bg-white/10 rounded-full h-2">
+          <div className="progress-bar h-2.5">
             <div
-              className="bg-purple-500 h-2 rounded-full transition-all duration-300"
+              className="progress-fill h-full"
               style={{ width: `${(votesCast / votesNeeded) * 100}%` }}
             />
           </div>
@@ -171,19 +195,31 @@ export function Voting({
         {isHost && allVoted && (
           <button
             onClick={onAdvancePhase}
-            className="w-full py-4 px-6 bg-green-500 hover:bg-green-400 text-white font-bold text-lg rounded-xl transition-colors"
+            className="btn btn-success w-full py-4 text-lg font-bold"
           >
-            Show Results!
+            <span className="flex items-center justify-center gap-2">
+              <span>🏆</span>
+              <span>Show Results!</span>
+            </span>
           </button>
         )}
 
         {isHost && !allVoted && (
           <button
             onClick={onAdvancePhase}
-            className="w-full py-4 px-6 bg-yellow-500/50 hover:bg-yellow-500 text-white font-bold text-lg rounded-xl transition-colors"
+            className="btn w-full py-4 text-lg font-bold bg-gold/70 text-white hover:bg-gold"
           >
-            Skip to Results (not all voted)
+            <span className="flex items-center justify-center gap-2">
+              <span>⏭️</span>
+              <span>Skip to Results</span>
+            </span>
           </button>
+        )}
+
+        {!isHost && !myVote && (
+          <div className="text-center text-gray-medium text-sm">
+            <span>Can&apos;t vote for your own photo!</span>
+          </div>
         )}
       </div>
     </div>

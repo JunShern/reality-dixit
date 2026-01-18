@@ -34,30 +34,40 @@ export default function RoomPage({ params }: PageProps) {
     submitVote,
     advancePhase,
     nextRound,
+    playAgain,
   } = useRoom(code);
 
   if (isLoading) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-900 to-indigo-900">
-        <div className="text-white text-xl">Loading...</div>
+      <main className="min-h-screen flex items-center justify-center bg-paper">
+        <div className="text-charcoal text-xl flex items-center gap-2">
+          <span className="animate-pulse-soft">🎲</span>
+          <span>Loading...</span>
+        </div>
       </main>
     );
   }
 
   if (error) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-purple-900 to-indigo-900 p-4">
-        <div className="text-red-300 text-xl mb-4">{error}</div>
-        <a href="/" className="text-purple-200 underline">Return to home</a>
+      <main className="min-h-screen flex flex-col items-center justify-center bg-paper p-4">
+        <div className="card-elevated p-6 text-center max-w-md">
+          <span className="text-3xl mb-4 block">😕</span>
+          <div className="text-coral text-xl mb-4">{error}</div>
+          <a href="/" className="btn btn-primary inline-block px-6 py-2">Return to home</a>
+        </div>
       </main>
     );
   }
 
   if (!room || !myPlayer) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-purple-900 to-indigo-900 p-4">
-        <div className="text-white text-xl">Room not found</div>
-        <a href="/" className="text-purple-200 underline mt-4">Return to home</a>
+      <main className="min-h-screen flex flex-col items-center justify-center bg-paper p-4">
+        <div className="card-elevated p-6 text-center max-w-md">
+          <span className="text-3xl mb-4 block">🔍</span>
+          <div className="text-charcoal text-xl mb-4">Room not found</div>
+          <a href="/" className="btn btn-primary inline-block px-6 py-2">Return to home</a>
+        </div>
       </main>
     );
   }
@@ -179,6 +189,8 @@ export default function RoomPage({ params }: PageProps) {
         return (
           <FinalScores
             players={players}
+            isHost={isHost}
+            onPlayAgain={playAgain}
           />
         );
 
@@ -188,7 +200,7 @@ export default function RoomPage({ params }: PageProps) {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-900 to-indigo-900">
+    <main className="min-h-screen bg-paper">
       {renderGamePhase()}
     </main>
   );

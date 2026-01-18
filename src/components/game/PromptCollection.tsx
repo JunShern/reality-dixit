@@ -48,31 +48,34 @@ export function PromptCollection({
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-paper">
+      <div className="w-full max-w-md animate-fade-in">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-white mb-2">Submit Your Prompt</h1>
-          <p className="text-purple-200">
-            Think of a caption that your friends will need to match with their photos!
+          <div className="inline-flex items-center gap-2 mb-3">
+            <span className="text-3xl">🃏</span>
+          </div>
+          <h1 className="text-display text-2xl font-bold text-charcoal mb-2">Submit Your Prompt</h1>
+          <p className="text-charcoal-light">
+            Think of a caption that your friends will match with their photos!
           </p>
         </div>
 
         {/* Prompt Input */}
         {!myPrompt ? (
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-xl mb-6">
+          <div className="card-elevated p-6 mb-6">
             <div className="mb-4">
-              <label className="block text-sm font-medium text-purple-200 mb-2">
+              <label className="block text-sm font-semibold text-teal mb-2">
                 Your Prompt
               </label>
               <input
                 type="text"
                 value={promptText}
                 onChange={(e) => setPromptText(e.target.value)}
-                placeholder="e.g., &quot;This literally made my day&quot;"
-                className="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-purple-300 border border-purple-400/30 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                placeholder='e.g., "This literally made my day"'
+                className="input w-full px-4 py-3"
                 maxLength={100}
               />
-              <p className="text-purple-300 text-xs mt-2">
+              <p className="text-gray-medium text-xs mt-2">
                 {promptText.length}/100 characters
               </p>
             </div>
@@ -80,14 +83,24 @@ export function PromptCollection({
             <button
               onClick={handleSubmit}
               disabled={!promptText.trim() || isSubmitting}
-              className="w-full py-3 px-4 bg-purple-500 hover:bg-purple-400 disabled:bg-purple-500/50 text-white font-semibold rounded-lg transition-colors"
+              className="btn btn-primary w-full py-3 text-lg"
             >
-              {isSubmitting ? 'Submitting...' : 'Submit Prompt'}
+              {isSubmitting ? (
+                <span className="animate-pulse-soft">Submitting...</span>
+              ) : (
+                <span className="flex items-center justify-center gap-2">
+                  <span>📝</span>
+                  <span>Submit Prompt</span>
+                </span>
+              )}
             </button>
 
             {/* Example prompts */}
-            <div className="mt-4">
-              <p className="text-purple-300 text-xs mb-2">Need inspiration?</p>
+            <div className="mt-5 pt-4 border-t-2 border-dashed border-gray-light">
+              <p className="text-gray-medium text-xs mb-2 flex items-center gap-1">
+                <span>💡</span>
+                <span>Need inspiration?</span>
+              </p>
               <div className="flex flex-wrap gap-2">
                 {[
                   '3am energy',
@@ -98,7 +111,7 @@ export function PromptCollection({
                   <button
                     key={example}
                     onClick={() => setPromptText(example)}
-                    className="text-xs px-2 py-1 bg-white/10 text-purple-200 rounded hover:bg-white/20 transition-colors"
+                    className="text-xs px-3 py-1.5 bg-cream-dark text-charcoal-light rounded-full hover:bg-coral-light/30 hover:text-coral-dark transition-colors border border-gray-light"
                   >
                     {example}
                   </button>
@@ -107,35 +120,53 @@ export function PromptCollection({
             </div>
           </div>
         ) : (
-          <div className="bg-green-500/20 border border-green-400/30 rounded-2xl p-6 mb-6">
-            <div className="flex items-center gap-2 text-green-300 mb-2">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
+          <div className="card p-6 mb-6 bg-sage/10 border-2 border-sage/40">
+            <div className="flex items-center gap-2 text-sage-dark mb-2">
+              <span className="text-xl">✅</span>
               <span className="font-semibold">Prompt Submitted!</span>
             </div>
-            <p className="text-white italic">&quot;{myPrompt.text}&quot;</p>
+            <p className="text-charcoal text-display text-lg italic">&quot;{myPrompt.text}&quot;</p>
           </div>
         )}
 
         {/* Progress */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-xl mb-6">
-          <h2 className="text-lg font-semibold text-white mb-4">
-            Waiting for prompts ({prompts.length}/{players.length})
+        <div className="card p-5 mb-6">
+          <h2 className="text-display text-lg font-bold text-teal mb-4 flex items-center gap-2">
+            <span>⏳</span>
+            <span>Waiting for prompts</span>
+            <span className="ml-auto badge badge-gold">{prompts.length}/{players.length}</span>
           </h2>
+
+          {/* Progress bar */}
+          <div className="progress-bar h-2 mb-4">
+            <div
+              className="progress-fill h-full"
+              style={{ width: `${(prompts.length / players.length) * 100}%` }}
+            />
+          </div>
+
           <div className="space-y-2">
             {players.map((player) => {
               const hasSubmitted = prompts.some(p => p.player_id === player.id);
               return (
                 <div
                   key={player.id}
-                  className="flex items-center justify-between p-2 rounded-lg bg-white/5"
+                  className={`flex items-center justify-between p-3 rounded-xl ${
+                    hasSubmitted ? 'bg-sage/10' : 'bg-cream-dark'
+                  }`}
                 >
-                  <span className="text-white">{player.username}</span>
+                  <div className="flex items-center gap-2">
+                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
+                      hasSubmitted ? 'bg-sage text-white' : 'bg-gray-light text-gray-medium'
+                    }`}>
+                      {hasSubmitted ? '✓' : '?'}
+                    </span>
+                    <span className="text-charcoal font-medium">{player.username}</span>
+                  </div>
                   {hasSubmitted ? (
-                    <span className="text-green-400 text-sm">Ready</span>
+                    <span className="text-sage-dark text-sm font-medium">Ready</span>
                   ) : (
-                    <span className="text-yellow-400 text-sm animate-pulse">Thinking...</span>
+                    <span className="text-gold text-sm animate-pulse-soft font-medium">Thinking...</span>
                   )}
                 </div>
               );
@@ -148,15 +179,25 @@ export function PromptCollection({
           <button
             onClick={handleStartRounds}
             disabled={isStarting}
-            className="w-full py-4 px-6 bg-green-500 hover:bg-green-400 disabled:bg-green-500/50 text-white font-bold text-lg rounded-xl transition-colors"
+            className="btn btn-success w-full py-4 text-lg font-bold"
           >
-            {isStarting ? 'Starting...' : 'Start Rounds!'}
+            {isStarting ? (
+              <span className="animate-pulse-soft">Starting...</span>
+            ) : (
+              <span className="flex items-center justify-center gap-2">
+                <span>🎬</span>
+                <span>Start Rounds!</span>
+              </span>
+            )}
           </button>
         )}
 
         {!isHost && allPromptsSubmitted && (
-          <div className="text-center text-purple-200">
-            All prompts submitted! Waiting for host to start...
+          <div className="card p-4 text-center">
+            <p className="text-charcoal-light flex items-center justify-center gap-2">
+              <span className="text-lg">✨</span>
+              <span>All prompts in! Waiting for host to start...</span>
+            </p>
           </div>
         )}
       </div>
