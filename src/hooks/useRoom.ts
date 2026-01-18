@@ -169,14 +169,16 @@ export function useRoom(roomCode: string): UseRoomResult {
       }, (payload) => {
         if (payload.eventType === 'UPDATE') {
           const newRoom = payload.new as Room;
-          setRoom(newRoom);
 
-          // If room reset to waiting state (Play Again), clear game data
-          if (newRoom.status === 'waiting' && newRoom.current_round === 0) {
+          // Clear game data when room transitions to waiting (Play Again)
+          // Check before updating room state so we can compare old vs new status
+          if (newRoom.status === 'waiting' && room?.status !== 'waiting') {
             setPrompts([]);
             setSubmissions([]);
             setVotes([]);
           }
+
+          setRoom(newRoom);
         }
       })
       .on('postgres_changes', {
