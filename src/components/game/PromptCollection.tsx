@@ -48,6 +48,7 @@ const INSPIRATION_PROMPTS = [
   'roadtrip',
   'fancy pants',
   'people of culture',
+  "don't you dare ever show anyone this picture",
 ];
 
 interface PromptCollectionProps {
