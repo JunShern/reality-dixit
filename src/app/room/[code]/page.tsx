@@ -34,6 +34,7 @@ export default function RoomPage({ params }: PageProps) {
     submitVote,
     advancePhase,
     nextRound,
+    playAgain,
   } = useRoom(code);
 
   if (isLoading) {
@@ -179,6 +180,8 @@ export default function RoomPage({ params }: PageProps) {
         return (
           <FinalScores
             players={players}
+            isHost={isHost}
+            onPlayAgain={playAgain}
           />
         );
 

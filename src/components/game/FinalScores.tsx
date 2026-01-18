@@ -1,12 +1,25 @@
 'use client';
 
+import { useState } from 'react';
 import type { Player } from '@/lib/types';
 
 interface FinalScoresProps {
   players: Player[];
+  isHost: boolean;
+  onPlayAgain: () => Promise<void>;
 }
 
-export function FinalScores({ players }: FinalScoresProps) {
+export function FinalScores({ players, isHost, onPlayAgain }: FinalScoresProps) {
+  const [isResetting, setIsResetting] = useState(false);
+
+  const handlePlayAgain = async () => {
+    setIsResetting(true);
+    try {
+      await onPlayAgain();
+    } finally {
+      setIsResetting(false);
+    }
+  };
   // Sort players by score
   const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
 
@@ -83,12 +96,19 @@ export function FinalScores({ players }: FinalScoresProps) {
         </div>
 
         {/* Play Again */}
-        <a
-          href="/"
-          className="block w-full py-4 px-6 bg-purple-500 hover:bg-purple-400 text-white font-bold text-lg rounded-xl transition-colors text-center"
-        >
-          Play Again
-        </a>
+        {isHost ? (
+          <button
+            onClick={handlePlayAgain}
+            disabled={isResetting}
+            className="w-full py-4 px-6 bg-purple-500 hover:bg-purple-400 disabled:bg-purple-500/50 text-white font-bold text-lg rounded-xl transition-colors"
+          >
+            {isResetting ? 'Resetting...' : 'Play Again'}
+          </button>
+        ) : (
+          <div className="text-center text-purple-200">
+            Waiting for host to start new game...
+          </div>
+        )}
       </div>
     </div>
   );
